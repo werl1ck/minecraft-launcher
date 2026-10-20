@@ -3,6 +3,7 @@ package io.github.werl1ck;
 import fr.flowarg.flowupdater.FlowUpdater;
 import fr.flowarg.flowupdater.versions.VanillaVersion;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class VersionInstall {
@@ -26,6 +27,17 @@ public class VersionInstall {
 
         updater.update(gameDirectory);
 
-        System.out.println("Installation finished");
+        Path versionJson = gameDirectory
+                .resolve(version + ".json");
+
+        if (Files.isRegularFile(versionJson)) {
+            System.out.println("Installation finished");
+        } else {
+            System.out.println("Version not a downloaded...");
+        }
+    }
+
+    public Path getGameDirectory() {
+        return gameDirectory;
     }
 }
