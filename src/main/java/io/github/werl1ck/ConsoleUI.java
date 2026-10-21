@@ -6,11 +6,13 @@ public class ConsoleUI {
 
     private final Scanner input = new Scanner(System.in);
     private final VersionInstall installer = new VersionInstall();
+    private final GameLauncher launcher = new GameLauncher(installer);
+    private final Scanner inputForLaunch = new Scanner(System.in);
 
-    public void ui() {
+    public void ui() throws Exception {
         System.out.println("""
                 --------------------------------------------------------------
-                MINECRAFT LAUNCHER 0.0.1V
+                MINECRAFT LAUNCHER 0.0.5V
                 
                 HELLO, DEAR USER!
                 
@@ -28,7 +30,7 @@ public class ConsoleUI {
         String userInput = input.nextLine();
 
         switch (userInput) {
-            case "1" -> System.out.println("Starting game...");
+            case "1" -> gameLauncher();
             case "2" -> showDirectory();
             case "3" -> System.out.println("...");
             case "4" -> installingGame();
@@ -46,12 +48,6 @@ public class ConsoleUI {
         System.out.println("Enter Minecraft version: ");
         String version = input.nextLine().trim();
 
-        System.out.println("Enter your nickname: ");
-        String nickname = input.nextLine().trim();
-
-        System.out.println("Enter RAM in MB: ");
-        int jvmRam = Integer.parseInt(input.nextLine().trim());
-
         try {
             installer.install(version);
         } catch (Exception e) {
@@ -59,5 +55,27 @@ public class ConsoleUI {
                     .formatted(e.getMessage()));
             e.printStackTrace();
         }
+    }
+
+    public void gameLauncher() throws Exception {
+
+        System.out.println("Enter version: ");
+        String gameVersion = inputForLaunch.nextLine().trim();
+
+        System.out.println("Enter your nickname: ");
+        String nickname = inputForLaunch.nextLine().trim();
+
+        System.out.println("Enter RAM in MB: ");
+        int jvmRam = Integer.parseInt(inputForLaunch.nextLine().trim());
+
+        ProcessBuilder builder = new ProcessBuilder(launcher.buildCommand(new LaunchOptions(
+                gameVersion,
+                nickname,
+                jvmRam
+        )));
+
+        builder.inheritIO();
+        Process process = builder.start();
+        System.out.println("Exit code: " + process.waitFor());
     }
 }

@@ -54,7 +54,7 @@ public class GameLauncher {
                 "--version", options.getGameVersion(),
                 "--gameDir", gameDir,
                 "--assetsDir", assetsDir,
-                "--assetIndex", "1.12",
+                "--assetIndex", options.getGameVersion(),
                 "--uuid", "00000000-0000-0000-0000-000000000000",
                 "--accessToken", "0",
                 "--userType", "legacy",
