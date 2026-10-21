@@ -50,7 +50,7 @@ public class ConsoleUI {
         String nickname = input.nextLine().trim();
 
         System.out.println("Enter RAM in MB: ");
-        int jvmRam = Integer.parseInt(input.next().trim());
+        int jvmRam = Integer.parseInt(input.nextLine().trim());
 
         try {
             installer.install(version);
