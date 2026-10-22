@@ -1,4 +1,4 @@
-package io.github.werl1ck;
+package io.github.werl1ck.service;
 
 import fr.flowarg.flowupdater.FlowUpdater;
 import fr.flowarg.flowupdater.versions.VanillaVersion;
@@ -25,9 +25,11 @@ public class VersionInstall {
 
         System.out.println("Installing Minecraft %s, ...".formatted(version));
 
-        updater.update(gameDirectory);
+        Path pathVersion = gameDirectory.resolve(version);
 
-        Path versionJson = gameDirectory
+        updater.update(pathVersion);
+
+        Path versionJson = pathVersion
                 .resolve(version + ".json");
 
         if (Files.isRegularFile(versionJson)) {
@@ -39,5 +41,10 @@ public class VersionInstall {
 
     public Path getGameDirectory() {
         return gameDirectory;
+    }
+
+    public Path getGameVersionDirectory(String version) {
+        Path pathVersion = gameDirectory.resolve(version);
+        return pathVersion;
     }
 }

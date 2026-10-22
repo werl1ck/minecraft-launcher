@@ -1,7 +1,10 @@
 package io.github.werl1ck;
 
+import io.github.werl1ck.console.ConsoleUI;
+
+
 public class Main {
-    public static void main(String[] args) {
+    static void main(String[] args) {
         ConsoleUI consoleUI = new ConsoleUI();
         try {
             consoleUI.ui();
