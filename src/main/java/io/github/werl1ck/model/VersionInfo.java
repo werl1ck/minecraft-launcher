@@ -1,4 +1,4 @@
-package io.github.werl1ck.json;
+package io.github.werl1ck.model;
 
 import com.google.gson.JsonElement;
 import java.util.List;

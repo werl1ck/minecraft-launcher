@@ -1,4 +1,4 @@
-package io.github.werl1ck.service;
+package io.github.werl1ck.config;
 
 public class LaunchOptions {
     private final String gameVersion;

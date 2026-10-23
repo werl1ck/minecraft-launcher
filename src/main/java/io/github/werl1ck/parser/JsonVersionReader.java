@@ -1,13 +1,14 @@
-package io.github.werl1ck.json;
+package io.github.werl1ck.parser;
 
 import com.google.gson.Gson;
+import io.github.werl1ck.model.VersionInfo;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class VersionReader {
+public class JsonVersionReader {
     private static final Gson GSON = new Gson();
 
     public static VersionInfo read(Path jsonPath) throws IOException {

@@ -1,7 +1,7 @@
 package io.github.werl1ck.console;
 
 import io.github.werl1ck.service.GameLauncher;
-import io.github.werl1ck.service.LaunchOptions;
+import io.github.werl1ck.config.LaunchOptions;
 import io.github.werl1ck.service.VersionInstall;
 
 import java.io.IOException;
@@ -20,20 +20,23 @@ public class ConsoleUI {
     public void ui() throws Exception {
         while (true) {
             System.out.println("""
-                    --------------------------------------------------------------
-                    MINECRAFT LAUNCHER 0.0.5V
-                    
-                    HELLO, DEAR USER!
-                    
-                    Options:
-                    1) Launch game
-                    2) Show file directory
-                    3) Delete game
-                    4) Install game
-                    5) Info
-                    
-                    --------------------------------------------------------------
-                    """);
+        ╭──────────────────────────────────────────╮
+        │                                          │
+        │           MINECRAFT LAUNCHER             │
+        │                 v0.5.0                   │
+        │                                          │
+        ├──────────────────────────────────────────┤
+        │                                          │
+        │   [1]  Launch game                       │
+        │   [2]  Show file directory               │
+        │   [3]  Delete game                       │
+        │   [4]  Install game                      │
+        │   [5]  Info                              │
+        │                                          │
+        ╰──────────────────────────────────────────╯
+
+        ◄ Ready to launch: 
+        """);
 
             System.out.println();
             String userInput = input.nextLine();

@@ -6,7 +6,7 @@
 
     <groupId>io.github.werl1ck</groupId>
     <artifactId>minecraft-launcher</artifactId>
-    <version>0.0.5</version>
+    <version>0.5.0</version>
 
     <properties>
         <maven.compiler.source>27</maven.compiler.source>

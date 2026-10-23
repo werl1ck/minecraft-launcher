@@ -1,9 +1,11 @@
 package io.github.werl1ck.service;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import io.github.werl1ck.json.VersionInfo;
-import io.github.werl1ck.json.VersionReader;
+import io.github.werl1ck.config.LaunchOptions;
+import io.github.werl1ck.model.VersionInfo;
+import io.github.werl1ck.parser.JsonVersionReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,6 +58,7 @@ public class GameLauncher {
         String assetsDir = versionInstall.getGameVersionDirectory(options.getGameVersion()).resolve("assets").toAbsolutePath().toString();
         String assetIndex = (info.assetIndex() != null) ? info.assetIndex().id() : options.getGameVersion();
 
+
         List<String> rawArgs = new ArrayList<>();
 
         // old format
@@ -76,9 +79,37 @@ public class GameLauncher {
                     }
                 } else if (element.isJsonObject()) {
                     JsonObject obj = element.getAsJsonObject();
-                    if (obj.has("value")) {
-                        JsonElement value = obj.get("value");
+                    boolean allowed = false;
 
+                    if (obj.has("rules")) {
+                        boolean isDemoUser = true;
+                        JsonArray rules = obj.getAsJsonArray("rules");
+                        for (JsonElement jsonElement : rules) {
+                            JsonObject rule = jsonElement.getAsJsonObject();
+                            String action = rule.get("action").getAsString();
+                            boolean ruleMatches = true;
+                            if (rule.has("features")) {
+                                JsonObject features = rule.get("features").getAsJsonObject();
+                                if (features.has("is_demo_user")) {
+                                    boolean ruleIsDemo = features.get("is_demo_user").getAsBoolean();
+
+                                    if (ruleIsDemo == isDemoUser && action.equals("allow")) {
+                                        allowed = true;
+                                    } else if (action.equals("disallow")) {
+                                        allowed = false;
+                                    }
+                                }
+                            } else if (rule.has("os")) {
+                                JsonObject os = rule.get("os").getAsJsonObject();
+                                String osName = System.getProperty("os.name").toLowerCase();
+                                String requiredOs = os.get("name").getAsString();
+                                boolean osMatches = osName.contains(requiredOs);
+                            }
+                        }
+                    }
+
+                    if (obj.has("value") && (!obj.has("rules") || allowed)) {
+                        JsonElement value = obj.get("value");
                         if (value.isJsonPrimitive()) {
                             rawArgs.add(obj.get("value").getAsString());
                         } else if (value.isJsonArray()) {
@@ -150,7 +181,7 @@ public class GameLauncher {
 
     public List<String> buildCommand(LaunchOptions options) throws IOException {
         Path jsonPath = versionInstall.getGameVersionDirectory(options.getGameVersion()).resolve(options.getGameVersion() + ".json");
-        VersionInfo info = VersionReader.read(jsonPath);
+        VersionInfo info = JsonVersionReader.read(jsonPath);
 
         List<String> command = new ArrayList<>();
         command.add("java");
