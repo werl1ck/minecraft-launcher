@@ -1,15 +1,23 @@
 package io.github.werl1ck;
 
 import io.github.werl1ck.console.ConsoleUI;
+import io.github.werl1ck.discord.DiscordRPC;
 
 
 public class Main {
-    static void main(String[] args) {
-        ConsoleUI consoleUI = new ConsoleUI();
+    public static void main() {
+        DiscordRPC discord = new DiscordRPC();
+
+        try {
+            discord.rpcConenct();
+        } catch (Exception e) {
+            System.out.println("Discord RPC unavailable. Continuing without it");
+        }
+
+        ConsoleUI consoleUI = new ConsoleUI(discord);
         try {
             consoleUI.ui();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             e.printStackTrace();
         }
     }

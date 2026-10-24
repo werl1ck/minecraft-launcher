@@ -1,9 +1,11 @@
 package io.github.werl1ck.console;
 
+import io.github.werl1ck.discord.DiscordRPC;
 import io.github.werl1ck.service.GameLauncher;
 import io.github.werl1ck.config.LaunchOptions;
 import io.github.werl1ck.service.VersionInstall;
 
+import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,28 +19,49 @@ public class ConsoleUI {
     private final VersionInstall installer = new VersionInstall();
     private final GameLauncher launcher = new GameLauncher(installer);
 
+    private DiscordRPC discord;
+
+    public ConsoleUI(DiscordRPC discord) {
+        this.discord = discord;
+    }
+
     public void ui() throws Exception {
         while (true) {
+
+
+            String pink = ConsoleColors.PINK;
+            String reset = ConsoleColors.RESET;
+
             System.out.println("""
-        ╭──────────────────────────────────────────╮
+        %s╭──────────────────────────────────────────╮
         │                                          │
         │           MINECRAFT LAUNCHER             │
-        │                 v0.5.0                   │
+        │                 %sv1.0.0%s                   │
         │                                          │
         ├──────────────────────────────────────────┤
         │                                          │
-        │   [1]  Launch game                       │
-        │   [2]  Show file directory               │
-        │   [3]  Delete game                       │
-        │   [4]  Install game                      │
-        │   [5]  Info                              │
+        │   %s[1]  Launch game%s                       %s│
+        │   %s[2]  Show file directory%s               %s│
+        │   %s[3]  Delete game%s                       %s│
+        │   %s[4]  Install game%s                      %s│
+        │   %s[5]  Info%s                              %s│
         │                                          │
         ╰──────────────────────────────────────────╯
+        %s
+        ◄ Ready to launch:
+        """.formatted(
+                    pink,
+                    ConsoleColors.WHITE, pink,
+                    ConsoleColors.LIME, reset, pink,
+                    ConsoleColors.WHITE, reset, pink,
+                    ConsoleColors.RED, reset, pink,
+                    ConsoleColors.LIME, reset, pink,
+                    ConsoleColors.BRIGHT_YELLOW, reset, pink,
+                    reset
+            ));
 
-        ◄ Ready to launch: 
-        """);
 
-            System.out.println();
+
             String userInput = input.nextLine();
 
             switch (userInput) {
@@ -46,13 +69,17 @@ public class ConsoleUI {
                 case "2" -> showDirectory();
                 case "3" -> removeVersion();
                 case "4" -> installingGame();
-                case "5" -> System.out.println("https://github.com/werl1ck");
+                case "5" -> System.out.println("""
+                        If you liked my work, could you please give it a star on GitHub?
+                        
+                        https://github.com/werl1ck
+                        """);
                 default -> System.out.println("Incorrect input");
             }
 
-            String userChoice = input.nextLine().trim();
-
-            if (userChoice.equals("n") || userChoice.equals("no")) {
+            System.out.println("Continue? [y/N]");
+            String userChoice = input.nextLine().toLowerCase().trim();
+            if (userChoice.equals("n")) {
                 break;
             }
         }
@@ -62,6 +89,18 @@ public class ConsoleUI {
     public void showDirectory() {
         System.out.println("Path: %s"
                 .formatted(installer.getGameDirectory()));
+
+        try {
+            if (!Desktop.isDesktopSupported()) {
+                System.out.println("Desktop is not supported");
+                return;
+            }
+
+            Desktop.getDesktop().open(installer.getGameDirectory().toFile());
+        } catch (IOException e) {
+            System.out.println("Failed to open directory: %s".formatted(e.getMessage()));
+            e.printStackTrace();
+        }
     }
 
     public void installingGame() {
@@ -79,48 +118,74 @@ public class ConsoleUI {
 
     public void gameLauncher() throws Exception {
 
-        System.out.println("Enter version: ");
-        String gameVersion = input.nextLine().trim();
+        try {
+            System.out.println("Enter version: ");
+            String gameVersion = input.nextLine().trim();
 
-        System.out.println("Enter your nickname: ");
-        String nickname = input.nextLine().trim();
+            System.out.println("Enter your nickname: ");
+            String nickname = input.nextLine().trim();
 
-        System.out.println("Enter RAM in MB: ");
-        int jvmRam = Integer.parseInt(input.nextLine().trim());
+            System.out.println("Enter RAM in MB: ");
+            int jvmRam = Integer.parseInt(input.nextLine().trim());
 
-        ProcessBuilder builder = new ProcessBuilder(launcher.buildCommand(new LaunchOptions(
-                gameVersion,
-                nickname,
-                jvmRam
-        )));
+            ProcessBuilder builder = new ProcessBuilder(launcher.buildCommand(new LaunchOptions(
+                    gameVersion,
+                    nickname,
+                    jvmRam
+            )));
 
-        builder.inheritIO();
-        Process process = builder.start();
-        System.out.println("Exit code: " + process.waitFor());
+            builder.inheritIO();
+            Process process = builder.start();
+            discord.updateStatus(
+                    "Plays Minecraft",
+                    "nickname: %s | version: %s"
+                            .formatted(nickname, gameVersion)
+            );
+
+            System.out.println("Exit code: " + process.waitFor());
+
+            discord.updateStatus(
+                    "In the console",
+                    "Waiting for your next action..."
+            );
+
+        } catch (Exception e) {
+            System.out.println("An error occurred: %s".formatted(e.getMessage()));
+            e.printStackTrace();
+        }
     }
 
     public void removeVersion() throws Exception {
         System.out.println("Enter version for delete: ");
         String userVersionInput = input.nextLine().trim();
-        System.out.println("Deleting files from: %s...".formatted(userVersionInput));
-        consoleProgressBar();
-        Thread.sleep(5000);
-        try (Stream<Path> walk = Files.walk(installer.getGameVersionDirectory(userVersionInput))) {
-            walk.sorted(Comparator.reverseOrder())
-                    .forEach(p -> {
-                        try {
-                            Files.delete(p);
-                        } catch (IOException e) {
-                            System.out.println("Error: directory is empty");
-                            e.printStackTrace();
-                        }
-                    });
-        } catch (Exception e) {
-            System.out.println("Error");
-        }
+        System.out.println("Are you sure? [y/N]");
+        String userChoice = input.nextLine().toLowerCase().trim();
+        if (userChoice.equals("n")) {
+            System.out.println("Deletion rejected");
+        } else if (userChoice.equals("y")) {
+            System.out.println("Deleting files from: %s...".formatted(userVersionInput));
+            consoleProgressBar();
+            Thread.sleep(5000);
+            try (Stream<Path> walk = Files.walk(installer.getGameVersionDirectory(userVersionInput))) {
+                walk.sorted(Comparator.reverseOrder())
+                        .forEach(p -> {
+                            try {
+                                Files.delete(p);
+                            } catch (IOException e) {
+                                System.out.println("Error: directory is empty");
+                                e.printStackTrace();
+                            }
+                        });
+            } catch (Exception e) {
+                System.out.println("Error");
+            }
 
-        System.out.println("Finished");
+            System.out.println("Finished");
+        } else {
+            System.out.println("Incorrect input");
+        }
     }
+
 
     public void consoleProgressBar() throws Exception {
         int total = 50;

@@ -82,12 +82,11 @@ public class GameLauncher {
                     boolean allowed = false;
 
                     if (obj.has("rules")) {
-                        boolean isDemoUser = true;
+                        boolean isDemoUser = false;
                         JsonArray rules = obj.getAsJsonArray("rules");
                         for (JsonElement jsonElement : rules) {
                             JsonObject rule = jsonElement.getAsJsonObject();
                             String action = rule.get("action").getAsString();
-                            boolean ruleMatches = true;
                             if (rule.has("features")) {
                                 JsonObject features = rule.get("features").getAsJsonObject();
                                 if (features.has("is_demo_user")) {
@@ -99,12 +98,19 @@ public class GameLauncher {
                                         allowed = false;
                                     }
                                 }
-                            } else if (rule.has("os")) {
+                            }
+                            /*
+
+                            death code, todo: add multi-platform support
+
+                            else if (rule.has("os")) {
                                 JsonObject os = rule.get("os").getAsJsonObject();
                                 String osName = System.getProperty("os.name").toLowerCase();
                                 String requiredOs = os.get("name").getAsString();
                                 boolean osMatches = osName.contains(requiredOs);
                             }
+
+                            */
                         }
                     }
 
@@ -155,7 +161,7 @@ public class GameLauncher {
                 .replace("${resolution_width}", "854")
                 .replace("${resolution_height}", "480")
                 .replace("${quickPlayPath}", "")
-                .replace("${quickPlaySingplayer}", "")
+                .replace("${quickPlaySingleplayer}", "")
                 .replace("${quickPlayMultiplayer}", "")
                 .replace("${quickPlayRealms}", "");
     }
