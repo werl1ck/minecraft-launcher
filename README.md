@@ -1,3 +1,0 @@
-# Minecraft Launcher for Linux
-
-*.....*
