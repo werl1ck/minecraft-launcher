@@ -44,7 +44,8 @@ Planned improvements and upcoming features:
 - [ ] Add configuration file support
 
 ## Disclaimer
->[!CAUTION] This launcher is still in early development and may contain critical bugs that can interfere with gameplay or cause unexpected crashes. If you encounter any critical issues, please report them to the developer via email at sharlaybogban@gmail.com
+> [!CAUTION]
+> This launcher is still in early development and may contain critical bugs that can interfere with gameplay or cause unexpected crashes. If you encounter any critical issues, please report them to the developer via email at sharlaybogban@gmail.com
 
 ## License
 This project is distributed under the GPU-3.0 License. See the **LICENSE** file in the root of the repository for full details.
