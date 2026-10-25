@@ -5,7 +5,7 @@ import io.github.werl1ck.discord.DiscordRPC;
 
 
 public class Main {
-    public static void main() {
+    public static void main(String[] args) {
         DiscordRPC discord = new DiscordRPC();
 
         try {

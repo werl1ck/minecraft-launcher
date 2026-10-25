@@ -5,6 +5,7 @@ import java.util.List;
 
 public record VersionInfo(
         String mainClass,
+        String inheritFrom,
         String minecraftArguments,
         String type,
         AssetIndexInfo assetIndex,

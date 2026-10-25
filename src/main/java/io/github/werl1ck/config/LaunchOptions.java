@@ -4,8 +4,9 @@ public class LaunchOptions {
     private final String gameVersion;
     private final String nickname;
     private final int jvmRam;
+    private final String gameType;
 
-    public LaunchOptions(String gameVersion, String nickname, int jvmRam) {
+    public LaunchOptions(String gameVersion, String nickname, int jvmRam, String gameType) {
 
         String regex = "^[a-zA-Z0-9_]+$";
 
@@ -28,6 +29,7 @@ public class LaunchOptions {
         this.gameVersion = gameVersion;
         this.nickname = nickname;
         this.jvmRam = jvmRam;
+        this.gameType = gameType;
     }
 
     public String getGameVersion() {
@@ -40,5 +42,9 @@ public class LaunchOptions {
 
     public int getJvmRam() {
         return jvmRam;
+    }
+
+    public String getGameType() {
+        return gameType;
     }
 }

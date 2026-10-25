@@ -6,7 +6,7 @@
 
     <groupId>io.github.werl1ck</groupId>
     <artifactId>minecraft-launcher</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-J21</version>
 
     <build>
         <plugins>

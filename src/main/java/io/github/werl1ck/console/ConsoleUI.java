@@ -128,10 +128,14 @@ public class ConsoleUI {
             System.out.println("Enter RAM in MB: ");
             int jvmRam = Integer.parseInt(input.nextLine().trim());
 
+            System.out.println("Enter game type (vanilla or fabric) : ");
+            String gameType = input.nextLine().trim().toLowerCase();
+
             ProcessBuilder builder = new ProcessBuilder(launcher.buildCommand(new LaunchOptions(
                     gameVersion,
                     nickname,
-                    jvmRam
+                    jvmRam,
+                    gameType
             )));
 
             builder.inheritIO();
@@ -201,9 +205,9 @@ public class ConsoleUI {
                 }
             }
             bar.append("] ").append((i * 100) / total).append("%");
-            System.out.println("\r" + bar.toString());
+            System.out.print("\r" + bar.toString());
             Thread.sleep(100);
         }
-        System.out.print("");
+        System.out.println("");
     }
 }

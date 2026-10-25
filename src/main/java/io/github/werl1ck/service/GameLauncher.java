@@ -47,30 +47,56 @@ public class GameLauncher {
 
     public String[] buildJvmArguments(LaunchOptions options) {
         return new String[]{
-                "-Djava.library.path=" + versionInstall.getGameVersionDirectory(options.getGameVersion()).resolve(nativeFiles).toAbsolutePath(),
+                "-Djava.library.path=" + versionInstall.getGameVersionDirectory(options.getGameVersion())
+                        .resolve(nativeFiles).toAbsolutePath(),
+//                "--enable-native-access=ALL-UNNAMED",
+//                "--enable-final-field-mutation=ALL-UNNAMED",
                 buildRamArgument(options)
         };
     }
 
-    public String[] buildGameArguments(LaunchOptions options, VersionInfo info) {
-        Path versionDir = versionInstall.getGameVersionDirectory(options.getGameVersion());
+    public String[] buildGameArguments(LaunchOptions options, VersionInfo info) throws IOException {
         String gameDir = versionInstall.getGameVersionDirectory(options.getGameVersion()).toAbsolutePath().toString();
         String assetsDir = versionInstall.getGameVersionDirectory(options.getGameVersion()).resolve("assets").toAbsolutePath().toString();
-        String assetIndex = (info.assetIndex() != null) ? info.assetIndex().id() : options.getGameVersion();
+        Path versionDir = versionInstall.getGameVersionDirectory(options.getGameVersion());
+        Path vanillaJsonPath = versionDir.resolve(options.getGameVersion() + ".json");
 
+        if (!Files.isRegularFile(vanillaJsonPath)) {
+            throw new IOException("Base Minecraft JSON not found: " + vanillaJsonPath);
+        }
+
+        VersionInfo vanillaInfo = JsonVersionReader.read(vanillaJsonPath);
+        String assetIndex;
+
+        if (info.assetIndex() != null && info.assetIndex().id() != null) {
+            assetIndex = info.assetIndex().id();
+        } else if (vanillaInfo.assetIndex() != null
+        && vanillaInfo.assetIndex().id() != null) {
+            assetIndex = vanillaInfo.assetIndex().id();
+        } else {
+            throw new IOException("Asset index not found for version: " + options.getGameVersion());
+        }
+
+        VersionInfo argumentsInfo = info;
+        if (info.minecraftArguments() == null
+        && (info.arguments() == null
+        || info.arguments().game() == null
+        || info.arguments().game().isEmpty())) {
+            argumentsInfo =  vanillaInfo;
+        }
 
         List<String> rawArgs = new ArrayList<>();
 
         // old format
-        if (info.minecraftArguments() != null) {
-            for (String arg : info.minecraftArguments().split(" ")) {
+        if (argumentsInfo.minecraftArguments() != null) {
+            for (String arg : argumentsInfo.minecraftArguments().split(" ")) {
                 rawArgs.add(arg);
             }
         }
 
         // new format
-        else if (info.arguments() != null && info.arguments().game() != null) {
-            for (JsonElement element : info.arguments().game()) {
+        else if (argumentsInfo.arguments() != null && argumentsInfo.arguments().game() != null) {
+            for (JsonElement element : argumentsInfo.arguments().game()) {
                 if (element.isJsonPrimitive()) {
                     rawArgs.add(element.getAsString());
                 } else if (element.isJsonArray()) {
@@ -186,7 +212,30 @@ public class GameLauncher {
     }
 
     public List<String> buildCommand(LaunchOptions options) throws IOException {
-        Path jsonPath = versionInstall.getGameVersionDirectory(options.getGameVersion()).resolve(options.getGameVersion() + ".json");
+
+        Path versionDir = versionInstall.getGameVersionDirectory(options.getGameVersion());
+        Path jsonPath;
+        String gameType = options.getGameType();
+
+        if ("fabric".equalsIgnoreCase(gameType)) {
+            jsonPath = Files.list(versionDir)
+                    .filter(Files::isRegularFile)
+                    .filter(path -> path.getFileName().toString().contains("fabric-loader")
+                            && path.getFileName().toString().contains(options.getGameVersion()))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Fabric JSON file not found for version %s"
+                            .formatted(options.getGameVersion())));
+        } else {
+            jsonPath = versionDir.resolve(options.getGameVersion() + ".json");
+            if (!Files.exists(jsonPath)) {
+                throw new RuntimeException("Vanilla JSON file not found: %s"
+                        .formatted(jsonPath));
+            }
+
+            System.out.println("Using JSON: %s"
+                    .formatted(jsonPath.getFileName()));
+        }
+
         VersionInfo info = JsonVersionReader.read(jsonPath);
 
         List<String> command = new ArrayList<>();
