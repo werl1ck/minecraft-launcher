@@ -36,9 +36,9 @@ java -version
 
 Planned improvements and upcoming features:
 
+- [x] Add support for Fabric mod loader
 - [ ] Add full support for Forge mods
 - [ ] Add support for NeoForge
-- [ ] Add support for Fabric mod loader
 - [ ] Optimize the codebase for better compatibility across different operating systems
 - [ ] Improve error handling and logging
 - [ ] Add configuration file support
