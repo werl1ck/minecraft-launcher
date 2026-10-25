@@ -1,52 +1,54 @@
-# Minecraft Launcher
+# Minecraft Launcher for Linux
 
-Консольный лаунчер Minecraft для Linux.
+A lightweight console based launcher for running various Minecraft versions on Linux systems. Designed to be fast, minimal and easy to use from the terminal.
 
-Проект находится в разработке. Сейчас основная задача --- установка и
-запуск Minecraft из консоли.
+## Features
 
-## Возможности
+* Runs multiple Minecraft versions directly from the terminal
+* Written in Java for cross platform compatibility
+* Simple command line interface
+* Lightweight and resource efficient
 
--   Установка версии Minecraft
--   Запуск установленной версии
--   Просмотр директории файлов лаунчера
--   Удаление установленной версии
--   Поддержка офлайн-ника
+## Installation
 
-## Важно
+Clone the repository to your local machine:
 
-Лаунчер находится на раннем этапе разработки и может содержать серьёзные
-ошибки. Используйте его на свой страх и риск. Перед использованием
-сохраните резервные копии важных файлов.
+```bash
+git clone https://github.com/werl1ck/minecraft-launcher.git
+cd minecraft-launcher-linux
+```
 
-Если вы нашли ошибку, сообщите о ней по адресу:
-**sharlaybogban@gmail.com**. По возможности приложите описание проблемы
-и текст ошибки.
+## Usage
+
+Once cloned, run the launcher using Java:
+
+```bash
+java -jar minecraft-launcher.jar
+```
+
+Make sure you have Java installed on your system. You can verify with:
+
+```bash
+java -version
+```
 
 ## TODO
 
--   [ ] Добавить поддержку Forge
--   [ ] Добавить поддержку Fabric
--   [ ] Добавить поддержку NeoForge
--   [ ] Добавить собственные сборки модпаков с оптимизацией
--   [ ] Оптимизировать и улучшить структуру кода
--   [ ] Улучшить обработку ошибок
--   [ ] Протестировать установку и запуск на разных системах Linux
+Planned improvements and upcoming features:
 
-## Запуск
+- [ ] Add full support for Forge mods
+- [ ] Add support for NeoForge
+- [ ] Add support for Fabric mod loader
+- [ ] Optimize the codebase for better compatibility across different operating systems
+- [ ] Improve error handling and logging
+- [ ] Add configuration file support
 
-Для запуска собранного JAR-файла потребуется совместимая версия Java.
+## Disclaimer
+> [!CAUTION]
+> This launcher is still in early development and may contain critical bugs that can interfere with gameplay or cause unexpected crashes. If you encounter any critical issues, please report them to the developer via email at sharlaybogban@gmail.com
 
-``` bash
-java -jar minecraft-launcher-0.5.0.jar
-```
+## License
+This project is distributed under the GPU-3.0 License. See the **LICENSE** file in the root of the repository for full details.
 
-## Сборка
-
-При установленном JDK и Maven выполните в корне проекта:
-
-``` bash
-mvn clean package
-```
-
-Готовый JAR-файл будет находиться в директории `target`.
+## Acknowledgments
+This launcher uses the [FlowUpdater](https://github.com/FlowArg/FlowUpdater) library, created by FlowArg. Special thanks to the FlowArg team for their work. Please note that the license of FlowUpdater also applies to this launcher. Make sure to review their license terms at the FlowUpdater repository.
